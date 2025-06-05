@@ -109,61 +109,76 @@ class _TemaPageState extends State<TemaPage> {
             ),
           ),
           Expanded(
-            child: GridView.count(
-              crossAxisCount: 2,
-              padding: const EdgeInsets.all(10),
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-              children: temasFiltrados.map((tema) {
-                return GestureDetector(
-                  onTap: () {
-                    if (temaPageMap.containsKey(tema['titulo'])) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => temaPageMap[tema['titulo']]!,
-                        ),
-                      );
-                    }
-                  },
-                  child: MouseRegion(
-                    onEnter: (_) {
-                      setState(() {
-                        _hoveredItem = tema['titulo'];
-                      });
-                    },
-                    onExit: (_) {
-                      setState(() {
-                        _hoveredItem = null;
-                      });
-                    },
-                    cursor: SystemMouseCursors.click,
-                    child: AnimatedScale(
-                      scale: _hoveredItem == tema['titulo'] ? 1.05 : 1.0,
-                      duration: const Duration(milliseconds: 200),
-                      child: Card(
-                        elevation: 4,
-                        color: Colors.deepPurple.shade50,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(Icons.book, size: 48, color: Colors.deepPurple),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                tema['titulo']!,
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(fontWeight: FontWeight.bold),
-                              ),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                int crossAxisCount = 1;
+                if (constraints.maxWidth >= 1400) {
+                  crossAxisCount = 5;
+                } else if (constraints.maxWidth >= 1000) {
+                  crossAxisCount = 3;
+                } else if (constraints.maxWidth >= 600) {
+                  crossAxisCount = 2;
+                } else {
+                  crossAxisCount = 1;
+                }
+                return GridView.count(
+                  crossAxisCount: crossAxisCount,
+                  padding: const EdgeInsets.all(10),
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  childAspectRatio: crossAxisCount == 1 ? 3 / 1 : 3 / 2,
+                  children: temasFiltrados.map((tema) {
+                    return GestureDetector(
+                      onTap: () {
+                        if (temaPageMap.containsKey(tema['titulo'])) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => temaPageMap[tema['titulo']]!,
                             ),
-                          ],
+                          );
+                        }
+                      },
+                      child: MouseRegion(
+                        onEnter: (_) {
+                          setState(() {
+                            _hoveredItem = tema['titulo'];
+                          });
+                        },
+                        onExit: (_) {
+                          setState(() {
+                            _hoveredItem = null;
+                          });
+                        },
+                        cursor: SystemMouseCursors.click,
+                        child: AnimatedScale(
+                          scale: _hoveredItem == tema['titulo'] ? 1.05 : 1.0,
+                          duration: const Duration(milliseconds: 200),
+                          child: Card(
+                            elevation: 4,
+                            color: Colors.deepPurple.shade50,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(Icons.book, size: 48, color: Colors.deepPurple),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    tema['titulo']!,
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
+                    );
+                  }).toList(),
                 );
-              }).toList(),
+              },
             ),
           ),
         ],
